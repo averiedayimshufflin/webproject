@@ -4,7 +4,7 @@ Submitted by: Averie Ahn
 
 About this web app: **Glow Guide is a makeup lookbook web app that displays different makeup styles for different aesthetics, occasions, and skill levels. Users can browse makeup looks on the homepage and click each item to view a detailed page with all information about that look, including products, difficulty, time, occasion, and tips.**
 
-Time spent: **3** hours
+Time spent: **5** hours
 
 ## Required Features
 
@@ -36,9 +36,9 @@ The following **additional** features are implemented:
 
 Here's a walkthrough of implemented required features:
 
-<img src='http://i.imgur.com/link/to/your/gif/file.gif' title='Video Walkthrough' width='' alt='Video Walkthrough' />
+<img src='https://imgur.com/a/YOVhp6E' title='Video Walkthrough' width='' alt='Video Walkthrough' />
 
-GIF created with ... Add GIF tool here
+GIF created with imgur
 
 <!-- Recommended tools:
 [Kap](https://getkap.co/) for macOS
