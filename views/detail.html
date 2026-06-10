@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{name}} | Glow Guide</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css">
+    <link rel="stylesheet" href="/styles.css">
+  </head>
+  <body>
+    <main class="container detail-page">
+      <nav aria-label="Breadcrumb">
+        <ul>
+          <li><a href="/">Glow Guide</a></li>
+        </ul>
+      </nav>
+
+      <section class="detail-layout">
+        <img class="detail-image" src="{{image}}" alt="{{name}} makeup look">
+        <article class="detail-content">
+          <div class="card-meta">
+            <span>{{category}}</span>
+            <span class="difficulty {{difficultyClass}}">{{difficulty}}</span>
+          </div>
+          <h1>{{name}}</h1>
+          <p>{{description}}</p>
+
+          <div class="facts">
+            <div>
+              <strong>Occasion</strong>
+              <span>{{occasion}}</span>
+            </div>
+            <div>
+              <strong>Time</strong>
+              <span>{{time}}</span>
+            </div>
+          </div>
+
+          <h2>Products Needed</h2>
+          <ul class="product-list">
+            {{products}}
+          </ul>
+
+          <blockquote>
+            <strong>Tip:</strong> {{tip}}
+          </blockquote>
+        </article>
+      </section>
+    </main>
+  </body>
+</html>
