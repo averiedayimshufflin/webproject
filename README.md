@@ -28,27 +28,56 @@ The following **additional** features are implemented:
 
 ## Database Setup
 
-This app expects a PostgreSQL connection string in `DATABASE_URL`. On Render, create a PostgreSQL database, copy the internal database URL into your web service environment variables, and name the variable `DATABASE_URL`.
+This app expects a PostgreSQL connection string in `DATABASE_URL`.
+
+Use the Render PostgreSQL URLs this way:
+
+- In your Render web service, set `DATABASE_URL` to the database's **Internal Database URL**.
+- From your own computer, use the database's **External Database URL** or copy Render's full **PSQL Command** from the database page.
+
+Render shows these values on the PostgreSQL database page under **Connect**.
+
+If you are using PowerShell on Windows, set a temporary local database URL like this:
+
+```powershell
+$env:DATABASE_URL="paste-the-render-external-database-url-here"
+$env:DB_SSL="true"
+```
 
 Create the table:
 
-```bash
-psql "$DATABASE_URL" -f server/config/schema.sql
+```powershell
+psql $env:DATABASE_URL -f server/config/schema.sql
 ```
 
 Seed the makeup looks:
 
-```bash
-psql "$DATABASE_URL" -f server/config/seed.sql
+```powershell
+psql $env:DATABASE_URL -f server/config/seed.sql
 ```
 
 Show the table contents for the walkthrough:
 
-```bash
-psql "$DATABASE_URL" -c "SELECT * FROM makeup_looks;"
+```powershell
+psql $env:DATABASE_URL -c "SELECT * FROM makeup_looks;"
 ```
 
-If you connect from outside Render with an external database URL, add `?sslmode=require` to the end of the connection string or set `DB_SSL=true`.
+If `psql` is not installed, use the full PSQL command copied from Render's database page, then run these SQL commands inside that opened prompt:
+
+```sql
+\i server/config/schema.sql
+\i server/config/seed.sql
+SELECT * FROM makeup_looks;
+```
+
+If you connect from outside Render with an external database URL and SSL is required, add `?sslmode=require` to the end of the connection string or set `DB_SSL=true`.
+
+If you are using Command Prompt instead of PowerShell, set the temporary values like this:
+
+```cmd
+set DATABASE_URL=paste-the-render-external-database-url-here
+set DB_SSL=true
+```
 
 ## Local Development
 
@@ -74,7 +103,7 @@ Use these Render web service settings:
 - **Start command:** `npm start`
 - **Environment variable:** `DATABASE_URL` set to the Render PostgreSQL internal database URL
 
-After deployment, run the schema and seed SQL against the Render database, then restart the web service if needed.
+After deployment, run the schema and seed SQL against the Render database using the external URL or the copied PSQL command. Then restart the web service if needed.
 
 ## Video Walkthrough
 

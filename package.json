@@ -4,7 +4,9 @@
   "description": "A list-based makeup lookbook with detail pages for each look.",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js"
+    "start": "node server.js",
+    "db:setup": "node server/config/setupDatabase.js setup",
+    "db:show": "node server/config/setupDatabase.js show"
   },
   "dependencies": {
     "pg": "^8.13.1"
