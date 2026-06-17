@@ -59,6 +59,60 @@ p {
   font-size: 1.08rem;
 }
 
+.filter-form {
+  align-items: end;
+  background: rgba(255, 255, 255, 0.82);
+  border: 1px solid rgba(79, 51, 69, 0.13);
+  border-radius: 8px;
+  display: grid;
+  gap: 14px;
+  grid-template-columns: repeat(2, minmax(180px, 1fr)) auto;
+  margin-bottom: 14px;
+  padding: 18px;
+}
+
+.filter-form label {
+  color: var(--plum);
+  font-weight: 700;
+  margin: 0;
+}
+
+.filter-form select {
+  margin-top: 8px;
+}
+
+.filter-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.filter-actions button,
+.filter-actions a {
+  margin: 0;
+  white-space: nowrap;
+}
+
+.result-summary {
+  color: var(--muted);
+  margin-bottom: 24px;
+}
+
+.empty-state {
+  background: rgba(255, 255, 255, 0.86);
+  border: 1px solid rgba(79, 51, 69, 0.13);
+  border-radius: 8px;
+  grid-column: 1 / -1;
+  padding: 28px;
+}
+
+.empty-state h2 {
+  color: var(--plum);
+}
+
+.empty-state p {
+  color: var(--muted);
+}
+
 .look-grid {
   display: grid;
   gap: 22px;
@@ -225,6 +279,14 @@ blockquote {
   .detail-content h1,
   .not-found h1 {
     font-size: 2.2rem;
+  }
+
+  .filter-form {
+    grid-template-columns: 1fr;
+  }
+
+  .filter-actions {
+    flex-wrap: wrap;
   }
 
   .detail-layout {

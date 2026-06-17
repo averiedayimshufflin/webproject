@@ -1,54 +1,100 @@
-# WEB103 Project 1 - *Glow Guide*
+# WEB103 Project 2 - *Glow Guide*
 
-Submitted by: Averie Ahn
+Submitted by: **Averie Ahn**
 
-About this web app: **Glow Guide is a makeup lookbook web app that displays different makeup styles for different aesthetics, occasions, and skill levels. Users can browse makeup looks on the homepage and click each item to view a detailed page with all information about that look, including products, difficulty, time, occasion, and tips.**
+About this web app: **Glow Guide is a database-backed makeup lookbook web app that displays makeup styles for different aesthetics, occasions, and skill levels. Users can browse all looks, filter by category and difficulty, and open a detail page for each look with products, timing, occasion, and tips.**
 
-Time spent: **5** hours
+Time spent: **7** hours
 
 ## Required Features
 
 The following **required** functionality is completed:
 
-* [x] **The web app uses only HTML, CSS, and JavaScript without a frontend framework**
-* [x] **The web app displays a title**
-* [x] **The web app displays at least five unique list items, each with at least three displayed attributes (such as title, text, and image)**
-* [x] **The user can click on each item in the list to see a detailed view of it, including all database fields**
-
-  * [x] **Each detail view should be a unique endpoint, such as `localhost:3000/looks/soft-glam` and `localhost:3000/looks/clean-girl-makeup`**
-  * [ ] *Note: When showing this feature in the video walkthrough, please show the unique URL for each detailed view. We will not be able to give points if we cannot see the implementation*
-* [x] **The web app serves an appropriate 404 page when no matching route is defined**
-* [x] **The web app is styled using Picocss**
+- [x] **The web app uses only HTML, CSS, and JavaScript without a frontend framework**
+- [x] **The web app is connected to a PostgreSQL database, with an appropriately structured database table for the list items**
+  - [ ] **NOTE: Your walkthrough added to the README must include a view of your Render dashboard demonstrating that your Postgres database is available**
+  - [ ] **NOTE: Your walkthrough added to the README must include a demonstration of your table contents. Use the psql command `SELECT * FROM makeup_looks;` to display your table contents.**
 
 The following **optional** features are implemented:
 
-* [x] The web app displays items in a unique format, such as cards rather than lists or animated list items
+- [x] The user can search for items by a specific attribute
 
 The following **additional** features are implemented:
 
-* [x] Added a makeup-themed design with styled cards for each makeup look
-* [x] Added detailed pages for each makeup look with products, occasion, difficulty, time, and makeup tips
-* [x] Added images for each makeup look to make the app more visually appealing
+- [x] Added category and difficulty filters that are populated from the database
+- [x] Added detail pages for every makeup look using database records
+- [x] Added a database connection error page to help debug missing environment variables or schema setup
+- [x] Added SQL files for creating and seeding the PostgreSQL table
+
+## Database Setup
+
+This app expects a PostgreSQL connection string in `DATABASE_URL`. On Render, create a PostgreSQL database, copy the internal database URL into your web service environment variables, and name the variable `DATABASE_URL`.
+
+Create the table:
+
+```bash
+psql "$DATABASE_URL" -f server/config/schema.sql
+```
+
+Seed the makeup looks:
+
+```bash
+psql "$DATABASE_URL" -f server/config/seed.sql
+```
+
+Show the table contents for the walkthrough:
+
+```bash
+psql "$DATABASE_URL" -c "SELECT * FROM makeup_looks;"
+```
+
+If you connect from outside Render with an external database URL, add `?sslmode=require` to the end of the connection string or set `DB_SSL=true`.
+
+## Local Development
+
+Install dependencies:
+
+```bash
+npm install
+```
+
+Start the app:
+
+```bash
+npm start
+```
+
+Open [http://localhost:3000](http://localhost:3000).
+
+## Render Deployment
+
+Use these Render web service settings:
+
+- **Build command:** `npm install`
+- **Start command:** `npm start`
+- **Environment variable:** `DATABASE_URL` set to the Render PostgreSQL internal database URL
+
+After deployment, run the schema and seed SQL against the Render database, then restart the web service if needed.
 
 ## Video Walkthrough
 
-**Note: please be sure to show the homepage, at least two unique detail page URLs, and the 404 page in your walkthrough.**
-
 Here's a walkthrough of implemented required features:
 
-<img src='https://imgur.com/a/YOVhp6E' title='Video Walkthrough' width='' alt='Video Walkthrough' />
+<img src='http://i.imgur.com/link/to/your/gif/file.gif' title='Video Walkthrough' width='' alt='Video Walkthrough' />
 
-GIF created with imgur
+GIF created with ScreenToGif
 
-<!-- Recommended tools:
-[Kap](https://getkap.co/) for macOS
-[ScreenToGif](https://www.screentogif.com/) for Windows
-[peek](https://github.com/phw/peek) for Linux.
--->
+The walkthrough should show:
+
+- The homepage loading makeup looks from the PostgreSQL table
+- The category or difficulty search/filter working
+- At least one detail page URL
+- The Render dashboard showing the PostgreSQL database is available
+- The `psql` command `SELECT * FROM makeup_looks;` displaying table contents
 
 ## Notes
 
-One challenge I encountered while building the app was creating separate routes for each makeup look so that every item had its own unique detail page. I also had to make sure each makeup look shared the same attributes, such as name, category, difficulty, occasion, products, description, image, and tip. Styling the cards with Picocss helped make the homepage cleaner and easier to navigate.
+The main challenge was moving the list data out of the JavaScript file and into a PostgreSQL table while keeping the original card and detail page experience. The backend now queries PostgreSQL for the homepage, filters, and detail pages, so the displayed data comes from the database instead of a hardcoded array.
 
 ## License
 

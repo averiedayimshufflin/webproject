@@ -15,6 +15,29 @@
         <p>Find makeup looks for every mood, outfit, and occasion.</p>
       </header>
 
+      <form class="filter-form" method="GET" action="/" aria-label="Filter makeup looks">
+        <label for="category">
+          Category
+          <select id="category" name="category">
+            <option value="">All categories</option>
+            {{categoryOptions}}
+          </select>
+        </label>
+        <label for="difficulty">
+          Difficulty
+          <select id="difficulty" name="difficulty">
+            <option value="">All difficulties</option>
+            {{difficultyOptions}}
+          </select>
+        </label>
+        <div class="filter-actions">
+          <button type="submit">Search</button>
+          <a href="/" role="button" class="secondary">Clear</a>
+        </div>
+      </form>
+
+      <p class="result-summary">{{resultSummary}}</p>
+
       <section class="look-grid" aria-label="Makeup looks">
         {{looks}}
       </section>

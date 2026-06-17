@@ -1,7 +1,7 @@
 const http = require("http");
 const fs = require("fs");
 const path = require("path");
-const makeupLooks = require("./data/makeupLooks");
+const { getFilterOptions, getMakeupLookById, getMakeupLooks } = require("./server/config/database");
 
 const PORT = process.env.PORT || 3000;
 const PUBLIC_DIR = path.join(__dirname, "public");
@@ -40,8 +40,18 @@ function difficultyClass(difficulty) {
   return difficulty.toLowerCase();
 }
 
-function renderCards() {
-  return makeupLooks
+function renderCards(looks) {
+  if (!looks.length) {
+    return `
+      <div class="empty-state">
+        <h2>No makeup looks found</h2>
+        <p>Try a different category or difficulty to browse more looks.</p>
+        <a href="/" role="button">Clear Filters</a>
+      </div>
+    `;
+  }
+
+  return looks
     .map(
       (look) => `
         <article class="look-card">
@@ -64,10 +74,30 @@ function renderCards() {
 }
 
 function renderProductList(products) {
-  return products
-    .split(",")
+  const productList = Array.isArray(products) ? products : String(products).split(",");
+
+  return productList
     .map((product) => `<li>${escapeHtml(product.trim())}</li>`)
     .join("");
+}
+
+function renderSelectOptions(options, selectedValue) {
+  return options
+    .map((option) => {
+      const selected = option === selectedValue ? " selected" : "";
+      return `<option value="${escapeHtml(option)}"${selected}>${escapeHtml(option)}</option>`;
+    })
+    .join("");
+}
+
+function renderResultSummary(filters, count) {
+  const appliedFilters = [filters.category, filters.difficulty].filter(Boolean);
+
+  if (!appliedFilters.length) {
+    return `Showing ${count} makeup looks from the database.`;
+  }
+
+  return `Showing ${count} makeup looks for ${escapeHtml(appliedFilters.join(" + "))}.`;
 }
 
 function sendHtml(res, statusCode, html) {
@@ -78,6 +108,17 @@ function sendHtml(res, statusCode, html) {
 function send404(res) {
   const html = readView("404.html");
   sendHtml(res, 404, html);
+}
+
+function sendDatabaseError(res, error) {
+  console.error(error);
+  const message = process.env.DATABASE_URL
+    ? "Check that the PostgreSQL table exists and the database connection string is correct."
+    : "Set DATABASE_URL to your Render PostgreSQL connection string, then run the schema and seed SQL files.";
+  const html = render(readView("error.html"), {
+    message: escapeHtml(message),
+  });
+  sendHtml(res, 500, html);
 }
 
 function serveStatic(req, res) {
@@ -100,7 +141,7 @@ function serveStatic(req, res) {
   });
 }
 
-const server = http.createServer((req, res) => {
+const server = http.createServer(async (req, res) => {
   const url = new URL(req.url, `http://${req.headers.host}`);
   const pathname = url.pathname;
 
@@ -110,41 +151,58 @@ const server = http.createServer((req, res) => {
   }
 
   if (pathname === "/") {
-    const html = render(readView("index.html"), {
-      looks: renderCards(),
-    });
-    sendHtml(res, 200, html);
+    try {
+      const filters = {
+        category: url.searchParams.get("category") || "",
+        difficulty: url.searchParams.get("difficulty") || "",
+      };
+      const [looks, filterOptions] = await Promise.all([getMakeupLooks(filters), getFilterOptions()]);
+      const html = render(readView("index.html"), {
+        looks: renderCards(looks),
+        categoryOptions: renderSelectOptions(filterOptions.categories, filters.category),
+        difficultyOptions: renderSelectOptions(filterOptions.difficulties, filters.difficulty),
+        resultSummary: renderResultSummary(filters, looks.length),
+      });
+      sendHtml(res, 200, html);
+    } catch (error) {
+      sendDatabaseError(res, error);
+    }
     return;
   }
 
   if (pathname.startsWith("/looks/")) {
     const id = pathname.split("/").pop();
-    const look = makeupLooks.find((item) => item.id === id);
 
-    if (!look) {
-      send404(res);
-      return;
+    try {
+      const look = await getMakeupLookById(id);
+
+      if (!look) {
+        send404(res);
+        return;
+      }
+
+      const html = render(readView("detail.html"), {
+        name: escapeHtml(look.name),
+        category: escapeHtml(look.category),
+        difficulty: escapeHtml(look.difficulty),
+        difficultyClass: difficultyClass(look.difficulty),
+        occasion: escapeHtml(look.occasion),
+        time: escapeHtml(look.time),
+        products: renderProductList(look.products),
+        description: escapeHtml(look.description),
+        tip: escapeHtml(look.tip),
+        image: look.image,
+      });
+      sendHtml(res, 200, html);
+    } catch (error) {
+      sendDatabaseError(res, error);
     }
-
-    const html = render(readView("detail.html"), {
-      name: escapeHtml(look.name),
-      category: escapeHtml(look.category),
-      difficulty: escapeHtml(look.difficulty),
-      difficultyClass: difficultyClass(look.difficulty),
-      occasion: escapeHtml(look.occasion),
-      time: escapeHtml(look.time),
-      products: renderProductList(look.products),
-      description: escapeHtml(look.description),
-      tip: escapeHtml(look.tip),
-      image: look.image,
-    });
-    sendHtml(res, 200, html);
     return;
   }
 
   send404(res);
 });
 
-server.listen(PORT, "127.0.0.1", () => {
+server.listen(PORT, () => {
   console.log(`Glow Guide is running at http://localhost:${PORT}`);
 });
