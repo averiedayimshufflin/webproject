@@ -203,6 +203,6 @@ const server = http.createServer(async (req, res) => {
   send404(res);
 });
 
-server.listen(PORT, () => {
+server.listen(PORT, "0.0.0.0", () => {
   console.log(`Glow Guide is running at http://localhost:${PORT}`);
 });
